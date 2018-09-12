@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    // 定义商品类
+    function Product(name, brand, price) {
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+    }
+    // 商品选择器
+    const ProductFilters = {
+        // 区间筛选
+        rangesFilter: function (products, ranges) {
+            if (ranges.length === 0) {
+                return products;
+            } else {
+                // 循环区间
+                for (let range of ranges) {
+                    products = products.filter(function (item) {
+                        return item[range.type] >= range.low && item[range.type] <= range.high;
+                    })
+                }
+                return products;
+            }
+        },
+        // 类型筛选
+        choosesFilter: function (products, chooses) {
+            let tmpProducts = [];
+            if (chooses.length === 0) {
+                tmpProducts = products;
+            } else {
+                /**
+                 * 选择类型条件是或逻辑，使用数组连接concat
+                 */
+                for (let choice of chooses) {
+                    tmpProducts = tmpProducts.concat(products.filter(function (item) {
+                        return item[choice.type].indexOf(choice.value) !== -1;
+                    }));
+                }
+            }
+            return tmpProducts;
+        }
+
+    }
+    // 定义一个执行函数doFilter()。
+    function doFilter(products, conditions) {
+        // 根据条件循环调用筛选器里的方法
+        for (key in conditions) {
+            // 判断是否有需要过滤的方法
+            if (ProductFilters.hasOwnProperty(key + 'Filter') && typeof ProductFilters[key + 'Filter'] === 'function') {
+                products = ProductFilters[key + 'Filter'](products, Conditions[key]);
+            }
+        }
+        return products;
+    }
+
+    // 商品数组
+    const products = [
+        new Product('华为荣耀9', '华为', 2299),
+        new Product('华为P10', '华为', 3488),
+        new Product('小米MIX2', '小米', 3599),
+        new Product('小米6', '小米', 2499),
+        new Product('小米Note3', '小米', 2499),
+        new Product('iPhone7 32G', '苹果', 4588),
+        new Product('iPhone7 Plus 128G', '苹果', 6388),
+        new Product('iPhone8', '苹果', 5888),
+        new Product('三星Galaxy S8', '三星', 5688),
+        new Product('三星Galaxy S7 edge', '三星', 3399),
+    ];
+    // 筛选条件
+    let Conditions = {
+        ranges: [
+            {
+                type: 'price',
+                low: 3000,
+                high: 4000
+            }
+        ],
+        chooses: [
+            {
+                type: 'brand',
+                value: '华为'
+            },
+            {
+                type: 'brand',
+                value: '苹果'
+            }
+        ]
+    }
+    // 调用函数
+
+    let result = doFilter(products, Conditions);
+    console.log(result);
+</script>
+
+</html>
